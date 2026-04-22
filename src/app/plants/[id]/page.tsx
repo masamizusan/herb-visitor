@@ -19,6 +19,7 @@ import {
 } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import type { Plant, PlantPhoto } from "@/types/database"
+import { sortPhotosByPriority } from "@/lib/photo-utils"
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
@@ -56,7 +57,7 @@ export default function PlantDetailPage({
           .order("uploaded_at", { ascending: false })
 
         if (photoData) {
-          setPhotos(photoData)
+          setPhotos(sortPhotosByPriority(photoData))
         }
       }
       setLoading(false)

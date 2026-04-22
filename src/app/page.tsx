@@ -3,9 +3,10 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { Search, Leaf, MapPin, ChevronRight } from "lucide-react"
+import { Search, Leaf, MapPin, ChevronRight, Sparkles } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import type { Plant, PlantPhoto } from "@/types/database"
+import { getRepresentativePhoto } from "@/lib/photo-utils"
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
@@ -15,11 +16,45 @@ function getPhotoUrl(path: string) {
   return `${SUPABASE_URL}/storage/v1/object/public/plant-photos/${path}`
 }
 
+// feature_flowerテキストから開花月を推定（1-12）
+function bloomMonthsFromText(text: string | null | undefined): Set<number> {
+  const months = new Set<number>()
+  if (!text) return months
+  // 「X月」の直接指定
+  const monthMatches = text.matchAll(/(\d{1,2})月/g)
+  for (const m of monthMatches) {
+    const n = parseInt(m[1], 10)
+    if (n >= 1 && n <= 12) months.add(n)
+  }
+  // 「X〜Y月」「X～Y月」「X-Y月」の範囲指定
+  const rangeMatches = text.matchAll(/(\d{1,2})\s*[～〜\-~]\s*(\d{1,2})月/g)
+  for (const m of rangeMatches) {
+    const a = parseInt(m[1], 10), b = parseInt(m[2], 10)
+    if (a >= 1 && a <= 12 && b >= 1 && b <= 12) {
+      if (a <= b) { for (let i = a; i <= b; i++) months.add(i) }
+      else { for (let i = a; i <= 12; i++) months.add(i); for (let i = 1; i <= b; i++) months.add(i) }
+    }
+  }
+  // 季節キーワード
+  const seasonMap: Record<string, number[]> = {
+    "早春": [2, 3], "春": [3, 4, 5], "晩春": [5],
+    "初夏": [5, 6], "夏": [6, 7, 8], "真夏": [7, 8], "晩夏": [8, 9],
+    "初秋": [9], "秋": [9, 10, 11], "晩秋": [11],
+    "冬": [12, 1, 2], "初冬": [12], "真冬": [1, 2],
+    "通年": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+  }
+  for (const [key, ms] of Object.entries(seasonMap)) {
+    if (text.includes(key)) for (const m of ms) months.add(m)
+  }
+  return months
+}
+
 export default function HomePage() {
   const [plants, setPlants] = useState<Plant[]>([])
   const [photos, setPhotos] = useState<Record<string, PlantPhoto>>({})
   const [searchQuery, setSearchQuery] = useState("")
   const [loading, setLoading] = useState(true)
+  const currentMonth = new Date().getMonth() + 1
 
   useEffect(() => {
     async function fetchData() {
@@ -39,11 +74,16 @@ export default function HomePage() {
           .in("plant_name", names)
 
         if (photoData) {
-          const photoMap: Record<string, PlantPhoto> = {}
+          // 植物ごとに写真を集約し、キャプション優先順位で代表写真を選択
+          const photosByPlant: Record<string, PlantPhoto[]> = {}
           for (const photo of photoData) {
-            if (!photoMap[photo.plant_name]) {
-              photoMap[photo.plant_name] = photo
-            }
+            if (!photosByPlant[photo.plant_name]) photosByPlant[photo.plant_name] = []
+            photosByPlant[photo.plant_name].push(photo)
+          }
+          const photoMap: Record<string, PlantPhoto> = {}
+          for (const [name, list] of Object.entries(photosByPlant)) {
+            const rep = getRepresentativePhoto(list)
+            if (rep) photoMap[name] = rep
           }
           setPhotos(photoMap)
         }
@@ -52,6 +92,12 @@ export default function HomePage() {
     }
     fetchData()
   }, [])
+
+  // 現在月に開花する植物を抽出
+  const seasonalPlants = plants.filter(p => {
+    const months = bloomMonthsFromText(p.feature_flower)
+    return months.has(currentMonth)
+  }).slice(0, 8)
 
   const areaCounts = plants.reduce(
     (acc, p) => {
@@ -159,6 +205,56 @@ export default function HomePage() {
               ))}
             </div>
           )}
+        </section>
+      )}
+
+      {/* Seasonal Picks */}
+      {!searchQuery && seasonalPlants.length > 0 && (
+        <section className="px-4 mt-6">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-bold flex items-center gap-1.5">
+              <Sparkles size={16} className="text-herb-primary" />
+              {currentMonth}月のおすすめハーブ
+            </h2>
+            <Link href="/plants" className="text-xs text-herb-primary font-medium flex items-center gap-0.5">
+              すべて見る <ChevronRight size={14} />
+            </Link>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 snap-x">
+            {seasonalPlants.map((plant) => (
+              <Link
+                key={plant.id}
+                href={`/plants/${plant.id}`}
+                className="flex-shrink-0 w-36 bg-white rounded-2xl overflow-hidden shadow-sm card-hover snap-start"
+              >
+                <div className="aspect-[4/3] bg-green-100 relative">
+                  {photos[plant.name] ? (
+                    <Image
+                      src={getPhotoUrl(photos[plant.name].storage_path)}
+                      alt={plant.name}
+                      fill
+                      className="object-cover"
+                      sizes="144px"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Leaf size={28} className="text-green-300" />
+                    </div>
+                  )}
+                  <span className="absolute top-2 left-2 bg-herb-primary/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-[10px] font-semibold text-white">
+                    見頃
+                  </span>
+                </div>
+                <div className="p-2.5">
+                  <h3 className="font-semibold text-sm truncate">{plant.name}</h3>
+                  <p className="text-xs text-herb-text-secondary mt-0.5">
+                    エリア {plant.area}
+                    {plant.category && ` ・ ${plant.category}`}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </section>
       )}
 

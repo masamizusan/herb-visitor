@@ -30,7 +30,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-dvh font-sans antialiased">
-        <div className="max-w-lg mx-auto min-h-dvh pb-20">{children}</div>
+        <div className="max-w-lg mx-auto min-h-dvh pb-28">{children}</div>
         <VisitorNav />
       </body>
     </html>

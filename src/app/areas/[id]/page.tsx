@@ -7,6 +7,7 @@ import Image from "next/image"
 import { ArrowLeft, Leaf, MapPin } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import type { Plant, PlantPosition, PlantPhoto } from "@/types/database"
+import { getRepresentativePhoto } from "@/lib/photo-utils"
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
 
@@ -50,11 +51,15 @@ export default function AreaDetailPage({
             .in("plant_name", names)
 
           if (photoData) {
-            const photoMap: Record<string, PlantPhoto> = {}
+            const byPlant: Record<string, PlantPhoto[]> = {}
             for (const photo of photoData) {
-              if (!photoMap[photo.plant_name]) {
-                photoMap[photo.plant_name] = photo
-              }
+              if (!byPlant[photo.plant_name]) byPlant[photo.plant_name] = []
+              byPlant[photo.plant_name].push(photo)
+            }
+            const photoMap: Record<string, PlantPhoto> = {}
+            for (const [name, list] of Object.entries(byPlant)) {
+              const rep = getRepresentativePhoto(list)
+              if (rep) photoMap[name] = rep
             }
             setPhotos(photoMap)
           }
