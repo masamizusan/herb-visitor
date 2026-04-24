@@ -30,7 +30,12 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-dvh font-sans antialiased">
-        <div className="max-w-lg mx-auto min-h-dvh pb-28">{children}</div>
+        <div
+          className="max-w-lg mx-auto min-h-dvh"
+          style={{ paddingBottom: "calc(6rem + env(safe-area-inset-bottom, 0px))" }}
+        >
+          {children}
+        </div>
         <VisitorNav />
       </body>
     </html>
