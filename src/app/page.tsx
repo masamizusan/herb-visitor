@@ -2,19 +2,13 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { Search, Leaf, MapPin, ChevronRight, Sparkles } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import type { Plant, PlantPhoto } from "@/types/database"
 import { getRepresentativePhoto } from "@/lib/photo-utils"
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
+import PlantImage from "@/components/plant-image"
 
 const AREAS = "ABCDEFGHIJKLMNOPQRSTUVW".split("")
-
-function getPhotoUrl(path: string) {
-  return `${SUPABASE_URL}/storage/v1/object/public/plant-photos/${path}`
-}
 
 // feature_flowerテキストから開花月を推定（1-12）
 function bloomMonthsFromText(text: string | null | undefined): Set<number> {
@@ -93,11 +87,20 @@ export default function HomePage() {
     fetchData()
   }, [])
 
-  // 現在月に開花する植物を抽出
-  const seasonalPlants = plants.filter(p => {
-    const months = bloomMonthsFromText(p.feature_flower)
-    return months.has(currentMonth)
-  }).slice(0, 8)
+  // 現在月に開花する植物を抽出 + 「開花」キャプション写真がある植物を最優先に
+  const seasonalPlants = plants
+    .filter(p => bloomMonthsFromText(p.feature_flower).has(currentMonth))
+    .sort((a, b) => {
+      // 開花キャプション写真の有無でソート（あり=0、なし=1）
+      const aHasBloom = photos[a.name]?.caption?.trim() === "開花" ? 0 : 1
+      const bHasBloom = photos[b.name]?.caption?.trim() === "開花" ? 0 : 1
+      if (aHasBloom !== bHasBloom) return aHasBloom - bHasBloom
+      // 次に写真の有無でソート（あり=0、なし=1）
+      const aHasPhoto = photos[a.name] ? 0 : 1
+      const bHasPhoto = photos[b.name] ? 0 : 1
+      return aHasPhoto - bHasPhoto
+    })
+    .slice(0, 8)
 
   const areaCounts = plants.reduce(
     (acc, p) => {
@@ -174,19 +177,14 @@ export default function HomePage() {
                   className="flex items-center gap-3 bg-white rounded-xl p-3 shadow-sm card-hover"
                 >
                   <div className="w-12 h-12 rounded-lg bg-green-100 overflow-hidden flex-shrink-0">
-                    {photos[plant.name] ? (
-                      <Image
-                        src={getPhotoUrl(photos[plant.name].storage_path)}
-                        alt={plant.name}
-                        width={48}
-                        height={48}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Leaf size={20} className="text-green-400" />
-                      </div>
-                    )}
+                    <PlantImage
+                      storagePath={photos[plant.name]?.storage_path}
+                      alt={plant.name}
+                      width={48}
+                      height={48}
+                      className="w-full h-full"
+                      iconSize={16}
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-semibold text-sm truncate">
@@ -228,19 +226,13 @@ export default function HomePage() {
                 className="flex-shrink-0 w-36 bg-white rounded-2xl overflow-hidden shadow-sm card-hover snap-start"
               >
                 <div className="aspect-[4/3] bg-green-100 relative">
-                  {photos[plant.name] ? (
-                    <Image
-                      src={getPhotoUrl(photos[plant.name].storage_path)}
-                      alt={plant.name}
-                      fill
-                      className="object-cover"
-                      sizes="144px"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Leaf size={28} className="text-green-300" />
-                    </div>
-                  )}
+                  <PlantImage
+                    storagePath={photos[plant.name]?.storage_path}
+                    alt={plant.name}
+                    fill
+                    sizes="144px"
+                    iconSize={28}
+                  />
                   <span className="absolute top-2 left-2 bg-herb-primary/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-[10px] font-semibold text-white">
                     見頃
                   </span>
@@ -326,19 +318,13 @@ export default function HomePage() {
                     className="bg-white rounded-2xl overflow-hidden shadow-sm card-hover"
                   >
                     <div className="aspect-[4/3] bg-green-100 relative">
-                      {photos[plant.name] ? (
-                        <Image
-                          src={getPhotoUrl(photos[plant.name].storage_path)}
-                          alt={plant.name}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 512px) 50vw, 230px"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Leaf size={32} className="text-green-300" />
-                        </div>
-                      )}
+                      <PlantImage
+                        storagePath={photos[plant.name]?.storage_path}
+                        alt={plant.name}
+                        fill
+                        sizes="(max-width: 512px) 50vw, 230px"
+                        iconSize={32}
+                      />
                       <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-[10px] font-semibold text-herb-primary">
                         <MapPin size={10} className="inline mr-0.5" />
                         {plant.area}

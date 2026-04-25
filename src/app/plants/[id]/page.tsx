@@ -200,8 +200,11 @@ export default function PlantDetailPage({
             )}
           </>
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <Leaf size={64} className="text-green-300" />
+          <div className="w-full h-full flex flex-col items-center justify-center bg-green-50">
+            <Leaf size={64} className="text-green-300 mb-2" />
+            <span className="text-green-500/70 font-medium text-sm">
+              写真準備中
+            </span>
           </div>
         )}
 

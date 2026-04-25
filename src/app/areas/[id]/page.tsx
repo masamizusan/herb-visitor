@@ -3,17 +3,11 @@
 import { useState, useEffect, use } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import Image from "next/image"
 import { ArrowLeft, Leaf, MapPin } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import type { Plant, PlantPosition, PlantPhoto } from "@/types/database"
 import { getRepresentativePhoto } from "@/lib/photo-utils"
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-
-function getPhotoUrl(path: string) {
-  return `${SUPABASE_URL}/storage/v1/object/public/plant-photos/${path}`
-}
+import PlantImage from "@/components/plant-image"
 
 export default function AreaDetailPage({
   params,
@@ -250,19 +244,14 @@ export default function AreaDetailPage({
                   className="flex items-center gap-3 bg-white rounded-xl p-3 shadow-sm card-hover"
                 >
                   <div className="w-12 h-12 rounded-lg bg-green-100 overflow-hidden flex-shrink-0">
-                    {photos[plant.name] ? (
-                      <Image
-                        src={getPhotoUrl(photos[plant.name].storage_path)}
-                        alt={plant.name}
-                        width={48}
-                        height={48}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Leaf size={20} className="text-green-400" />
-                      </div>
-                    )}
+                    <PlantImage
+                      storagePath={photos[plant.name]?.storage_path}
+                      alt={plant.name}
+                      width={48}
+                      height={48}
+                      className="w-full h-full"
+                      iconSize={16}
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-sm truncate">

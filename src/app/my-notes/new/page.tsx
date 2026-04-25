@@ -186,19 +186,25 @@ function NewNoteContent() {
         visit_date: visitDate,
       }
 
-      if (editId) {
-        await supabase
-          .from("visitor_notes")
-          .update({ ...noteData, updated_at: new Date().toISOString() })
-          .eq("id", editId)
-      } else {
-        await supabase.from("visitor_notes").insert(noteData)
+      const result = editId
+        ? await supabase
+            .from("visitor_notes")
+            .update({ ...noteData, updated_at: new Date().toISOString() })
+            .eq("id", editId)
+        : await supabase.from("visitor_notes").insert(noteData)
+
+      if (result.error) {
+        console.error("DB save error:", result.error)
+        alert(`保存に失敗しました: ${result.error.message}`)
+        setSaving(false)
+        return
       }
 
+      alert(editId ? "ノートを更新しました" : "ノートを保存しました")
       router.push("/my-notes")
     } catch (err) {
       console.error("Save error:", err)
-      alert("保存に失敗しました。もう一度お試しください。")
+      alert(`保存に失敗しました: ${err instanceof Error ? err.message : "不明なエラー"}`)
     } finally {
       setSaving(false)
     }

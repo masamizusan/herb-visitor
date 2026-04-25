@@ -2,17 +2,11 @@
 
 import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { Search, Leaf, MapPin, Filter, X } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import type { Plant, PlantPhoto } from "@/types/database"
 import { getRepresentativePhoto } from "@/lib/photo-utils"
-
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!
-
-function getPhotoUrl(path: string) {
-  return `${SUPABASE_URL}/storage/v1/object/public/plant-photos/${path}`
-}
+import PlantImage from "@/components/plant-image"
 
 export default function PlantsPage() {
   const [plants, setPlants] = useState<Plant[]>([])
@@ -256,19 +250,13 @@ export default function PlantsPage() {
                 className="bg-white rounded-2xl overflow-hidden shadow-sm card-hover"
               >
                 <div className="aspect-[4/3] bg-green-100 relative">
-                  {photos[plant.name] ? (
-                    <Image
-                      src={getPhotoUrl(photos[plant.name].storage_path)}
-                      alt={plant.name}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 512px) 50vw, 230px"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Leaf size={32} className="text-green-300" />
-                    </div>
-                  )}
+                  <PlantImage
+                    storagePath={photos[plant.name]?.storage_path}
+                    alt={plant.name}
+                    fill
+                    sizes="(max-width: 512px) 50vw, 230px"
+                    iconSize={32}
+                  />
                   <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-[10px] font-semibold text-herb-primary">
                     <MapPin size={10} className="inline mr-0.5" />
                     {plant.area}
