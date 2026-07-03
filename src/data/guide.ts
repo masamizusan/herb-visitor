@@ -14,6 +14,10 @@ export interface GuideSection {
   tips?: string[] // 補足・コツ
   links?: GuideLink[] // 関連ページへの導線
   showImagePlaceholder?: boolean
+  imageSrc?: string // 差し替え用スクリーンショットのパス（未設定なら準備中プレースホルダーを表示）
+  imageAlt?: string
+  imageWidth?: number // next/image用の実画像サイズ（アスペクト比維持に使用）
+  imageHeight?: number
   imageCaption?: string
   comingSoon?: boolean // 「準備中」セクション
   comingSoonItems?: string[] // 準備中セクション内に並べる今後の追加予定項目
@@ -39,7 +43,11 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     ],
     links: [{ href: "/plants", label: "ハーブ一覧を見る" }],
     showImagePlaceholder: true,
-    imageCaption: "検索画面のスクリーンショット（準備中）",
+    imageSrc: "/images/guide/guide_search_screenshot.jpg",
+    imageAlt: "検索画面（ハーブ一覧）のスクリーンショット",
+    imageWidth: 739,
+    imageHeight: 1486,
+    imageCaption: "検索画面（ハーブ一覧）のスクリーンショット",
     // TODO: 和名／学名の両対応や読み仮名検索など、検索仕様の拡張予定があれば
     //       ここに追記する（現状は名前・カテゴリ・香り・利用法のみが検索対象）。
   },
@@ -58,7 +66,11 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     ],
     links: [{ href: "/areas", label: "マップを開く" }],
     showImagePlaceholder: true,
-    imageCaption: "マップ画面のスクリーンショット（準備中）",
+    imageSrc: "/images/guide/guide_map_screenshot.jpg",
+    imageAlt: "マップ画面（エリアマップ）のスクリーンショット",
+    imageWidth: 739,
+    imageHeight: 656,
+    imageCaption: "マップ画面（エリアマップ）のスクリーンショット",
     // TODO: 現在地表示機能は現時点で未実装。対応する場合はここに使い方を追記する。
   },
   {
@@ -101,8 +113,3 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     // TODO: 内容が確定した項目から、通常セクションと同じ形式で追加していく。
   },
 ]
-
-export const GUIDE_SUPPORT_NOTE =
-  "その他ご不明点がございましたら、ハーブ園スタッフまたはお問い合わせ窓口までご連絡ください。"
-// TODO: 問い合わせ先（電話番号・メールアドレス・受付時間等）が確定次第、
-//       GUIDE_SUPPORT_NOTE の下に連絡先ボタン／テキストを追加する。

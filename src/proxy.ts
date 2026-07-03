@@ -13,6 +13,7 @@ const PUBLIC_PATHS = [
   "/favicon.ico",
   "/manifest.json",
   "/icons/",
+  "/images/",
   "/apple-touch-icon.png",
   "/sw.js",
 ]

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import {
   HelpCircle,
   Search,
@@ -14,11 +15,7 @@ import {
   Image as ImageIcon,
   type LucideIcon,
 } from "lucide-react"
-import {
-  GUIDE_SECTIONS,
-  GUIDE_INTRO_TEXT,
-  GUIDE_SUPPORT_NOTE,
-} from "@/data/guide"
+import { GUIDE_SECTIONS, GUIDE_INTRO_TEXT } from "@/data/guide"
 
 const SECTION_ICONS: Record<string, LucideIcon> = {
   search: Search,
@@ -111,12 +108,30 @@ export default function GuidePage() {
                   )}
 
                   {section.showImagePlaceholder && (
-                    <div className="rounded-xl overflow-hidden border border-dashed border-herb-border bg-green-50 aspect-video flex flex-col items-center justify-center gap-1">
-                      <ImageIcon size={28} className="text-green-300" />
-                      <span className="text-xs text-green-600/70 font-medium">
-                        {section.imageCaption ?? "画像準備中"}
-                      </span>
-                    </div>
+                    section.imageSrc && section.imageWidth && section.imageHeight ? (
+                      <figure className="rounded-xl overflow-hidden border border-herb-border bg-green-50">
+                        <Image
+                          src={section.imageSrc}
+                          alt={section.imageAlt ?? section.imageCaption ?? section.title}
+                          width={section.imageWidth}
+                          height={section.imageHeight}
+                          sizes="(max-width: 640px) 100vw, 480px"
+                          className="w-full h-auto block"
+                        />
+                        {section.imageCaption && (
+                          <figcaption className="text-xs text-herb-text-secondary text-center py-1.5 border-t border-herb-border">
+                            {section.imageCaption}
+                          </figcaption>
+                        )}
+                      </figure>
+                    ) : (
+                      <div className="rounded-xl overflow-hidden border border-dashed border-herb-border bg-green-50 aspect-video flex flex-col items-center justify-center gap-1">
+                        <ImageIcon size={28} className="text-green-300" />
+                        <span className="text-xs text-green-600/70 font-medium">
+                          {section.imageCaption ?? "画像準備中"}
+                        </span>
+                      </div>
+                    )
                   )}
 
                   {section.tips && section.tips.length > 0 && (
@@ -167,15 +182,6 @@ export default function GuidePage() {
             </section>
           )
         })}
-      </div>
-
-      {/* お問い合わせ導線 */}
-      <div className="px-4 pb-8">
-        <div className="bg-white rounded-2xl shadow-sm p-5 text-center">
-          <p className="text-sm text-herb-text font-medium leading-relaxed">
-            {GUIDE_SUPPORT_NOTE}
-          </p>
-        </div>
       </div>
     </div>
   )
