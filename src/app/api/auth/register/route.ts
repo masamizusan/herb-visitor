@@ -56,6 +56,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error || !data) {
+      console.error("users insert error:", error)
       return NextResponse.json({ error: "登録に失敗しました" }, { status: 500 })
     }
 
