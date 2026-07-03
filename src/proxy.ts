@@ -11,6 +11,10 @@ const PUBLIC_PATHS = [
   "/api/bloom-photos",
   "/_next/",
   "/favicon.ico",
+  "/manifest.json",
+  "/icons/",
+  "/apple-touch-icon.png",
+  "/sw.js",
 ]
 
 export async function proxy(request: NextRequest) {
