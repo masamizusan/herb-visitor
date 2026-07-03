@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "NODE_OPTIONS='--max-old-space-size=4096' next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "send-notification": "node scripts/send-notification.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.10.0",

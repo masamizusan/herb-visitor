@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import webpush from 'web-push';
 import { createClient } from '@supabase/supabase-js';
+import { getSession } from '@/lib/auth';
 
 webpush.setVapidDetails(
   'mailto:info-saitama@farm-group.com',
@@ -16,13 +17,29 @@ function getSupabase() {
 }
 
 export async function POST(req: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: 'ログインが必要です' }, { status: 401 });
+  }
+
+  const supabase = getSupabase();
+
+  const { data: user, error: userError } = await supabase
+    .from('users')
+    .select('is_admin')
+    .eq('id', session.userId)
+    .maybeSingle();
+
+  if (userError || !user?.is_admin) {
+    return NextResponse.json({ error: '権限がありません' }, { status: 403 });
+  }
+
   const { title, body, url } = await req.json();
 
   if (!title) {
     return NextResponse.json({ error: 'title is required' }, { status: 400 });
   }
 
-  const supabase = getSupabase();
   const { data: subscriptions, error } = await supabase
     .from('push_subscriptions')
     .select('endpoint, p256dh, auth');

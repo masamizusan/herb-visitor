@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase"
 import type { Plant, PlantPhoto } from "@/types/database"
 import { getRepresentativePhoto } from "@/lib/photo-utils"
 import PlantImage from "@/components/plant-image"
+import PushSubscribeButton from "@/components/push-subscribe-button"
 
 const AREAS = "ABCDEFGHIJKLMNOPQRSTUVW".split("")
 
@@ -157,6 +158,11 @@ export default function HomePage() {
             className="w-full h-12 pl-10 pr-4 rounded-2xl bg-white text-herb-text placeholder:text-herb-text-secondary/60 text-sm shadow-lg border-0 focus:outline-none focus:ring-2 focus:ring-white/50"
           />
         </div>
+      </section>
+
+      {/* Push Notification Opt-in */}
+      <section className="px-4 mt-4 flex justify-center">
+        <PushSubscribeButton />
       </section>
 
       {/* Search Results */}
