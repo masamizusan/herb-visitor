@@ -91,12 +91,12 @@ export default function MyNotesPage() {
     <div className="min-h-dvh">
       {/* Header */}
       <div className="px-4 pt-8 pb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <BookOpen size={20} className="text-herb-primary" />
-            <h1 className="text-xl font-bold">マイノート</h1>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 min-w-0">
+            <BookOpen size={20} className="text-herb-primary flex-shrink-0" />
+            <h1 className="text-xl font-bold truncate">マイノート</h1>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-shrink-0">
             <Link
               href="/my-notes/new"
               className="flex items-center gap-1.5 bg-herb-primary text-white rounded-xl px-4 h-10 text-sm font-semibold shadow-md active:scale-[0.98] transition-transform"
@@ -107,11 +107,10 @@ export default function MyNotesPage() {
             <button
               onClick={handleLogout}
               disabled={loggingOut}
-              className="flex items-center gap-1 bg-white text-herb-text-secondary border border-herb-border rounded-xl px-3 h-10 text-xs font-medium hover:bg-rose-50 hover:text-rose-500 hover:border-rose-200 transition-colors disabled:opacity-50"
+              className="flex items-center justify-center gap-1 bg-white text-herb-text-secondary border border-herb-border rounded-xl w-10 h-10 text-xs font-medium hover:bg-rose-50 hover:text-rose-500 hover:border-rose-200 transition-colors disabled:opacity-50 flex-shrink-0"
               aria-label="ログアウト"
             >
               <LogOut size={14} />
-              <span className="hidden sm:inline">{loggingOut ? "..." : "ログアウト"}</span>
             </button>
           </div>
         </div>
