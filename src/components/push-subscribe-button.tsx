@@ -28,6 +28,15 @@ export default function PushSubscribeButton() {
         return;
       }
 
+      // permissionが'granted'でなければ購読は存在しえないはずだが、
+      // 端末によっては古い/迷子のPushSubscriptionがgetSubscription()で
+      // 返ってくることがあるため、未許可時に「完了」と誤表示しないよう
+      // permissionの実際の値を確認してから購読状態を見る
+      if (Notification.permission !== 'granted') {
+        if (!cancelled) setStatus('idle');
+        return;
+      }
+
       try {
         const reg = await navigator.serviceWorker.ready;
         const sub = await reg.pushManager.getSubscription();
