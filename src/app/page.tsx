@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import { getMonth } from "date-fns"
 import { Search, Leaf, MapPin, ChevronRight, Sparkles } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import type { Plant, PlantPhoto } from "@/types/database"
@@ -49,7 +50,24 @@ export default function HomePage() {
   const [photos, setPhotos] = useState<Record<string, PlantPhoto>>({})
   const [searchQuery, setSearchQuery] = useState("")
   const [loading, setLoading] = useState(true)
-  const currentMonth = new Date().getMonth() + 1
+  // 月をまたいでタブ/PWAを開きっぱなしにしても表示が更新されるよう、
+  // レンダー時の決め打ちではなく再表示時に再計算する
+  const [currentMonth, setCurrentMonth] = useState(() => getMonth(new Date()) + 1)
+
+  useEffect(() => {
+    const refreshMonth = () => setCurrentMonth(getMonth(new Date()) + 1)
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") refreshMonth()
+    }
+    window.addEventListener("focus", refreshMonth)
+    window.addEventListener("pageshow", refreshMonth)
+    document.addEventListener("visibilitychange", onVisibilityChange)
+    return () => {
+      window.removeEventListener("focus", refreshMonth)
+      window.removeEventListener("pageshow", refreshMonth)
+      document.removeEventListener("visibilitychange", onVisibilityChange)
+    }
+  }, [])
 
   useEffect(() => {
     async function fetchData() {

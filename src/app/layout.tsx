@@ -3,6 +3,7 @@ import "./globals.css"
 import VisitorNav from "@/components/visitor-nav"
 import AutoLogoutProvider from "@/components/auto-logout-provider"
 import SwRegister from "@/components/sw-register"
+import AddToHomeScreenPrompt from "@/components/add-to-home-screen-prompt"
 
 export const metadata: Metadata = {
   title: "見沼氷川ハーブ園",
@@ -50,6 +51,7 @@ export default function RootLayout({
         <VisitorNav />
         <AutoLogoutProvider />
         <SwRegister />
+        <AddToHomeScreenPrompt />
       </body>
     </html>
   )

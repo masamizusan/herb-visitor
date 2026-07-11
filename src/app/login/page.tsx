@@ -215,14 +215,19 @@ function LoginPageInner() {
             </Link>
           </p>
 
-          <p className="text-center text-xs text-herb-text-secondary">
-            <Link
-              href="/forgot-password"
-              className="text-herb-primary/80 hover:text-herb-primary underline underline-offset-2"
-            >
-              IDまたはパスワードを忘れた方はこちら
-            </Link>
-          </p>
+          <div className="text-center text-xs text-herb-text-secondary space-y-1">
+            <p>
+              <Link
+                href="/forgot-password"
+                className="text-herb-primary/80 hover:text-herb-primary underline underline-offset-2"
+              >
+                パスワードを忘れた方はこちら
+              </Link>
+            </p>
+            <p>
+              IDを忘れた方は、お手数ですが再度新規登録をお願いいたします
+            </p>
+          </div>
         </form>
       </div>
     </div>
