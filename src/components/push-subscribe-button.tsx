@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { isStandalone, detectMobilePlatform } from '@/lib/platform';
+import AddToHomeScreenModal from '@/components/add-to-home-screen-modal';
 
 function urlBase64ToUint8Array(base64String: string): ArrayBuffer {
   const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
@@ -11,15 +13,27 @@ function urlBase64ToUint8Array(base64String: string): ArrayBuffer {
   return arr.buffer as ArrayBuffer;
 }
 
+type Status = 'checking' | 'idle' | 'loading' | 'subscribed' | 'denied' | 'error' | 'unsupported-ios';
+
 export default function PushSubscribeButton() {
-  const [status, setStatus] = useState<'checking' | 'idle' | 'loading' | 'subscribed' | 'denied' | 'error'>('checking');
+  const [status, setStatus] = useState<Status>('checking');
+  const [showAddToHomeScreenModal, setShowAddToHomeScreenModal] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
 
     (async () => {
       if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-        if (!cancelled) setStatus('error');
+        if (!cancelled) {
+          // iOSはホーム画面に追加したPWA（standalone）でしかWeb Pushに対応していないため、
+          // Safariで直接開いた場合はここに来る。汎用エラーではなく追加手順を案内する。
+          if (detectMobilePlatform() === 'ios' && !isStandalone()) {
+            setStatus('unsupported-ios');
+            setShowAddToHomeScreenModal(true);
+          } else {
+            setStatus('error');
+          }
+        }
         return;
       }
 
@@ -54,7 +68,12 @@ export default function PushSubscribeButton() {
 
   const subscribe = async () => {
     if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-      setStatus('error');
+      if (detectMobilePlatform() === 'ios' && !isStandalone()) {
+        setStatus('unsupported-ios');
+        setShowAddToHomeScreenModal(true);
+      } else {
+        setStatus('error');
+      }
       return;
     }
 
@@ -99,6 +118,24 @@ export default function PushSubscribeButton() {
 
   if (status === 'denied') {
     return <p className="text-sm text-red-600">通知が許可されていません。ブラウザの設定から変更してください。</p>;
+  }
+
+  if (status === 'unsupported-ios') {
+    return (
+      <>
+        <p className="text-sm text-herb-text-secondary text-center max-w-xs">
+          iPhoneで通知を受け取るには、まずホーム画面に追加してから開いてください。
+        </p>
+        {showAddToHomeScreenModal && (
+          <AddToHomeScreenModal
+            platform="ios"
+            title="ホーム画面に追加してください"
+            description="iPhoneでプッシュ通知を受け取るには、ホーム画面に追加してから開く必要があります。"
+            onClose={() => setShowAddToHomeScreenModal(false)}
+          />
+        )}
+      </>
+    );
   }
 
   if (status === 'error') {
