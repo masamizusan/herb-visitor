@@ -55,6 +55,12 @@ export default function AddToHomeScreenModal({
               </span>
               「ホーム画面に追加」を選択
             </li>
+            <li className="flex items-center gap-1.5">
+              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-herb-primary text-white text-xs font-bold flex items-center justify-center">
+                3
+              </span>
+              ホーム画面のアイコンから開き直してログイン
+            </li>
           </ol>
         ) : (
           <ol className="space-y-2 text-sm text-herb-text bg-herb-bg rounded-xl px-3.5 py-3">
@@ -71,6 +77,12 @@ export default function AddToHomeScreenModal({
                 2
               </span>
               「ホーム画面に追加」または「アプリをインストール」を選択
+            </li>
+            <li className="flex items-center gap-1.5">
+              <span className="flex-shrink-0 w-5 h-5 rounded-full bg-herb-primary text-white text-xs font-bold flex items-center justify-center">
+                3
+              </span>
+              ホーム画面のアイコンから開き直してログイン
             </li>
           </ol>
         )}
