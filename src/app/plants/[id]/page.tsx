@@ -21,6 +21,7 @@ import {
 import { supabase } from "@/lib/supabase"
 import type { Plant, PlantPhoto } from "@/types/database"
 import { sortPhotosByPriority } from "@/lib/photo-utils"
+import FavoriteButton from "@/components/favorite-button"
 
 interface PlantNote {
   id: string
@@ -233,6 +234,14 @@ export default function PlantDetailPage({
         >
           <ArrowLeft size={20} />
         </button>
+
+        {/* Favorite button */}
+        <FavoriteButton
+          plantId={plant.id}
+          variant="dark"
+          size={20}
+          className="absolute top-4 right-4"
+        />
       </div>
 
       {/* Photo thumbnails */}

@@ -2,11 +2,13 @@
 
 import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
-import { Search, Leaf, MapPin, Filter, X } from "lucide-react"
+import { Search, Leaf, MapPin, Filter, Heart, X } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import type { Plant, PlantPhoto } from "@/types/database"
 import { getRepresentativePhoto } from "@/lib/photo-utils"
 import PlantImage from "@/components/plant-image"
+import FavoriteButton from "@/components/favorite-button"
+import { useFavorites } from "@/hooks/useFavorites"
 
 export default function PlantsPage() {
   const [plants, setPlants] = useState<Plant[]>([])
@@ -16,6 +18,8 @@ export default function PlantsPage() {
   const [selectedArea, setSelectedArea] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("")
   const [showFilters, setShowFilters] = useState(false)
+  const [favoritesOnly, setFavoritesOnly] = useState(false)
+  const { favoriteIds, isFavorite } = useFavorites()
 
   useEffect(() => {
     async function fetchData() {
@@ -76,6 +80,7 @@ export default function PlantsPage() {
 
   const filteredPlants = useMemo(() => {
     return uniquePlants.filter((p) => {
+      if (favoritesOnly && !isFavorite(p.id)) return false
       if (selectedArea && p.area !== selectedArea) return false
       if (selectedCategory && p.category !== selectedCategory) return false
       if (searchQuery) {
@@ -89,7 +94,7 @@ export default function PlantsPage() {
       }
       return true
     })
-  }, [uniquePlants, selectedArea, selectedCategory, searchQuery])
+  }, [uniquePlants, favoritesOnly, isFavorite, selectedArea, selectedCategory, searchQuery])
 
   const activeFilterCount =
     (selectedArea ? 1 : 0) + (selectedCategory ? 1 : 0)
@@ -128,6 +133,31 @@ export default function PlantsPage() {
               {activeFilterCount > 0 && (
                 <span className="bg-white text-herb-primary rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-bold">
                   {activeFilterCount}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setFavoritesOnly(!favoritesOnly)}
+              aria-pressed={favoritesOnly}
+              className={`h-10 px-3 rounded-xl border flex items-center gap-1.5 text-sm font-medium transition-colors flex-shrink-0 ${
+                favoritesOnly
+                  ? "bg-rose-500 text-white border-rose-500"
+                  : "bg-white text-herb-text-secondary border-herb-border"
+              }`}
+            >
+              <Heart
+                size={16}
+                fill={favoritesOnly ? "currentColor" : "none"}
+              />
+              {favoriteIds.length > 0 && (
+                <span
+                  className={`rounded-full w-4 h-4 text-[10px] flex items-center justify-center font-bold ${
+                    favoritesOnly
+                      ? "bg-white text-rose-500"
+                      : "bg-rose-100 text-rose-500"
+                  }`}
+                >
+                  {favoriteIds.length}
                 </span>
               )}
             </button>
@@ -245,10 +275,21 @@ export default function PlantsPage() {
           </div>
         ) : filteredPlants.length === 0 ? (
           <div className="text-center py-16">
-            <Leaf size={40} className="text-green-200 mx-auto mb-3" />
-            <p className="text-herb-text-secondary text-sm">
-              該当するハーブが見つかりませんでした
-            </p>
+            {favoritesOnly ? (
+              <>
+                <Heart size={40} className="text-rose-200 mx-auto mb-3" />
+                <p className="text-herb-text-secondary text-sm">
+                  まだお気に入りに登録したハーブがありません
+                </p>
+              </>
+            ) : (
+              <>
+                <Leaf size={40} className="text-green-200 mx-auto mb-3" />
+                <p className="text-herb-text-secondary text-sm">
+                  該当するハーブが見つかりませんでした
+                </p>
+              </>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-3">
@@ -270,6 +311,11 @@ export default function PlantsPage() {
                     <MapPin size={10} className="inline mr-0.5" />
                     {plant.area}
                   </span>
+                  <FavoriteButton
+                    plantId={plant.id}
+                    size={16}
+                    className="absolute top-1 right-1"
+                  />
                 </div>
                 <div className="p-3">
                   <h3 className="font-semibold text-sm truncate">
