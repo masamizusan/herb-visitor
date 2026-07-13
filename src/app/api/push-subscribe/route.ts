@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSession } from '@/lib/auth';
+import { sendPushToSubscription } from '@/lib/web-push';
+
+const WELCOME_SENDER_NAME = '見沼氷川公園管理スタッフ';
+const WELCOME_MESSAGE = 'アプリ会員登録ありがとうございます';
 
 function getSupabase() {
   return createClient(
@@ -29,7 +34,37 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Failed to save subscription' }, { status: 500 });
   }
 
+  await sendWelcomeNotificationIfNeeded(supabase, { endpoint, p256dh: keys.p256dh, auth: keys.auth });
+
   return NextResponse.json({ ok: true });
+}
+
+// ログイン中ユーザーに対して初回購読時のみウェルカム通知を送る（ユーザー単位で重複送信を防止）
+async function sendWelcomeNotificationIfNeeded(
+  supabase: ReturnType<typeof getSupabase>,
+  sub: { endpoint: string; p256dh: string; auth: string }
+) {
+  const session = await getSession();
+  if (!session) return;
+
+  const { data: user } = await supabase
+    .from('users')
+    .select('welcome_notified_at')
+    .eq('id', session.userId)
+    .maybeSingle();
+
+  if (!user || user.welcome_notified_at) return;
+
+  await sendPushToSubscription(sub, {
+    title: WELCOME_SENDER_NAME,
+    body: WELCOME_MESSAGE,
+    url: '/',
+  });
+
+  await supabase
+    .from('users')
+    .update({ welcome_notified_at: new Date().toISOString() })
+    .eq('id', session.userId);
 }
 
 export async function DELETE(req: NextRequest) {

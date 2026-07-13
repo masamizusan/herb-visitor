@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { getSession } from '@/lib/auth';
+import { getStaffSession } from '@/lib/staff-auth';
 import { broadcastPush } from '@/lib/web-push';
 
 function getSupabase() {
@@ -11,21 +11,9 @@ function getSupabase() {
 }
 
 export async function POST(req: NextRequest) {
-  const session = await getSession();
-  if (!session) {
+  const staffSession = await getStaffSession();
+  if (!staffSession) {
     return NextResponse.json({ error: 'ログインが必要です' }, { status: 401 });
-  }
-
-  const supabase = getSupabase();
-
-  const { data: user, error: userError } = await supabase
-    .from('users')
-    .select('is_admin')
-    .eq('id', session.userId)
-    .maybeSingle();
-
-  if (userError || !user?.is_admin) {
-    return NextResponse.json({ error: '権限がありません' }, { status: 403 });
   }
 
   const { title, body, url } = await req.json();
@@ -33,6 +21,8 @@ export async function POST(req: NextRequest) {
   if (!title) {
     return NextResponse.json({ error: 'title is required' }, { status: 400 });
   }
+
+  const supabase = getSupabase();
 
   try {
     const result = await broadcastPush(supabase, { title, body: body ?? '', url: url ?? '/' });
