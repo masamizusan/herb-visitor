@@ -6,7 +6,6 @@ const PUBLIC_PATHS = [
   "/login",
   "/register",
   "/forgot-password",
-  "/reset-password",
   "/api/auth/",
   "/api/bloom-photos",
   "/_next/",
@@ -16,6 +15,10 @@ const PUBLIC_PATHS = [
   "/images/",
   "/apple-touch-icon.png",
   "/sw.js",
+  // 職員用画面・APIは一般ユーザーの session Cookieとは別の
+  // staff_session による独自認証を行うため、この一般ガードの対象外とする
+  "/staff",
+  "/api/staff/",
 ]
 
 export async function proxy(request: NextRequest) {

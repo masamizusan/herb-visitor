@@ -1,5 +1,6 @@
 "use client"
 
+import { usePathname } from "next/navigation"
 import { useEffect } from "react"
 
 const INACTIVITY_TIMEOUT_MS = 60 * 60 * 1000    // 1時間無操作でログアウト
@@ -12,10 +13,20 @@ const STORAGE_KEY = "lastActivityAt"
 const TAB_SESSION_KEY = "session_tab"
 
 // ログインなしでアクセスできる公開パス（プレフィックス一致）
-const PUBLIC_PATHS = ["/login", "/register", "/forgot-password", "/reset-password"]
+const PUBLIC_PATHS = ["/login", "/register", "/forgot-password"]
+
+// 強制パスワード変更チェックをスキップするパス（未ログインで開ける画面、変更画面自身は対象外）
+const SKIP_PASSWORD_CHECK_PATHS = [...PUBLIC_PATHS, "/change-password"]
+
+// 職員用画面（別セッション・別認証）はビジター向けの自動ログアウト機構の対象外
+const STAFF_PATH_PREFIX = "/staff"
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.some((p) => pathname.startsWith(p))
+}
+
+function skipPasswordCheck(pathname: string): boolean {
+  return SKIP_PASSWORD_CHECK_PATHS.some((p) => pathname.startsWith(p))
 }
 
 async function logout() {
@@ -29,16 +40,21 @@ async function logout() {
 }
 
 /**
- * セッション維持フック。以下の2つを担う:
+ * セッション維持フック。以下の4つを担う:
  * 1. ハートビート: 10分ごとに /api/auth/refresh を呼んでJWT(30分有効)を更新。
  *    タブ/ブラウザを閉じると更新が止まり、最大30分でJWTが期限切れになる。
  * 2. 無操作ログアウト: 1時間操作がなければ強制ログアウト。
  * 3. タブ再オープン検知: sessionStorage フラグがなければログアウト。
+ * 4. 強制パスワード変更誘導: 仮パスワードでのログイン後、新パスワードに
+ *    変更するまで /change-password 以外のページに留まれないようにする。
  */
 export function useAutoLogout(enabled: boolean = true) {
+  const pathname = usePathname()
+
   useEffect(() => {
     if (!enabled) return
     if (typeof window === "undefined") return
+    if (window.location.pathname.startsWith(STAFF_PATH_PREFIX)) return
 
     // --- タブ生存チェック ---
     const tabAlive = sessionStorage.getItem(TAB_SESSION_KEY)
@@ -105,4 +121,29 @@ export function useAutoLogout(enabled: boolean = true) {
       clearInterval(heartbeat)
     }
   }, [enabled])
+
+  // --- 強制パスワード変更誘導（ページ遷移のたびにチェック） ---
+  useEffect(() => {
+    if (!enabled) return
+    if (typeof window === "undefined") return
+    if (pathname.startsWith(STAFF_PATH_PREFIX)) return
+    if (skipPasswordCheck(pathname)) return
+
+    let cancelled = false
+    fetch("/api/auth/me")
+      .then((r) => r.json())
+      .then(({ user }) => {
+        if (cancelled) return
+        if (user?.mustChangePassword) {
+          window.location.href = "/change-password"
+        }
+      })
+      .catch(() => {
+        // 通信失敗時はチェックをスキップ（次回遷移時に再試行）
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [enabled, pathname])
 }

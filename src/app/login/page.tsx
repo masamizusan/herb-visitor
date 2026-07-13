@@ -122,7 +122,7 @@ function LoginPageInner() {
       sessionStorage.setItem("session_tab", "1")
       // router.push はCookie反映前にRSCリクエストを発行するレースが発生し、
       // 初回ログインが固まったように見える原因になるためフルページ遷移にする
-      window.location.href = redirect
+      window.location.href = json.mustChangePassword ? "/change-password" : redirect
     } catch {
       setError("通信エラーが発生しました")
       setSubmitting(false)

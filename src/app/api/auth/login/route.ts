@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     const { data: user } = await supabase
       .from("users")
-      .select("id, user_id, password_hash")
+      .select("id, user_id, password_hash, password_reset_required")
       .eq("user_id", userId)
       .maybeSingle()
 
@@ -50,7 +50,11 @@ export async function POST(request: NextRequest) {
     const token = await createSessionToken({ userId: user.id, userCode: user.user_id })
     await setSessionCookie(token)
 
-    return NextResponse.json({ success: true, userCode: user.user_id })
+    return NextResponse.json({
+      success: true,
+      userCode: user.user_id,
+      mustChangePassword: !!user.password_reset_required,
+    })
   } catch {
     return NextResponse.json({ error: "リクエストの処理に失敗しました" }, { status: 500 })
   }
