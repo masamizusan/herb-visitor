@@ -120,25 +120,27 @@ export default function StaffNewsPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-slate-100">
-      <div className="bg-slate-800 px-5 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2 text-white">
-          <ShieldCheck size={20} />
-          <div>
-            <p className="font-bold text-sm">お知らせ管理</p>
-            <p className="text-xs text-slate-300">{staffUsername}</p>
+    <div className="min-h-dvh bg-slate-100 w-screen ml-[calc(50%_-_50vw)]">
+      <div className="max-w-3xl mx-auto">
+        <div className="bg-slate-800 px-5 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-white">
+            <ShieldCheck size={20} />
+            <div>
+              <p className="font-bold text-sm">お知らせ管理</p>
+              <p className="text-xs text-slate-300">{staffUsername}</p>
+            </div>
           </div>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-1 text-slate-300 hover:text-white text-sm"
+          >
+            <LogOut size={16} />
+            ログアウト
+          </button>
         </div>
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-1 text-slate-300 hover:text-white text-sm"
-        >
-          <LogOut size={16} />
-          ログアウト
-        </button>
       </div>
 
-      <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
+      <div className="max-w-3xl mx-auto px-4 py-6 space-y-4">
         <Link
           href="/staff/dashboard"
           className="inline-flex items-center gap-1 text-slate-500 hover:text-slate-800 text-sm"
