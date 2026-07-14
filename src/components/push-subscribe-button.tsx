@@ -2,16 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { isStandalone, detectMobilePlatform } from '@/lib/platform';
+import { urlBase64ToUint8Array } from '@/lib/push-subscription';
 import AddToHomeScreenModal from '@/components/add-to-home-screen-modal';
-
-function urlBase64ToUint8Array(base64String: string): ArrayBuffer {
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
-  const rawData = atob(base64);
-  const arr = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; i++) arr[i] = rawData.charCodeAt(i);
-  return arr.buffer as ArrayBuffer;
-}
 
 type Status = 'checking' | 'idle' | 'loading' | 'subscribed' | 'denied' | 'error' | 'unsupported-ios';
 

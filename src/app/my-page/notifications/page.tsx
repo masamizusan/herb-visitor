@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { ArrowLeft, Bell } from "lucide-react"
+import { unsubscribeFromPush, resubscribeToPushIfPermitted } from "@/lib/push-subscription"
 
 export default function MyPageNotificationsPage() {
   const [loading, setLoading] = useState(true)
@@ -38,6 +39,13 @@ export default function MyPageNotificationsPage() {
       if (!res.ok) {
         setNotifyNews(!next)
         setError("設定の更新に失敗しました")
+        return
+      }
+      // プッシュ通知の購読状態を設定に合わせる（ホーム画面の表示と矛盾しないように）
+      if (next) {
+        await resubscribeToPushIfPermitted().catch(() => {})
+      } else {
+        await unsubscribeFromPush().catch(() => {})
       }
     } catch {
       setNotifyNews(!next)
