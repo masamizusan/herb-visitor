@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, Leaf, Map, BookOpen, Bell, HelpCircle } from "lucide-react"
+import { Home, Leaf, Map, BookOpen, Bell, HelpCircle, User } from "lucide-react"
 
 const navItems = [
   { href: "/", label: "ホーム", icon: Home },
@@ -11,6 +11,7 @@ const navItems = [
   { href: "/my-notes", label: "ノート", icon: BookOpen },
   { href: "/news", label: "お知らせ", icon: Bell },
   { href: "/guide", label: "ガイド", icon: HelpCircle },
+  { href: "/my-page", label: "マイページ", icon: User },
 ]
 
 export default function VisitorNav() {
@@ -30,7 +31,7 @@ export default function VisitorNav() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex flex-col items-center justify-center min-w-[64px] min-h-[44px] px-3 py-1 rounded-xl transition-colors ${
+              className={`flex flex-col items-center justify-center min-w-[46px] min-h-[44px] px-1 py-1 rounded-xl transition-colors ${
                 isActive
                   ? "text-herb-primary"
                   : "text-herb-text-secondary hover:text-herb-primary-light"
