@@ -139,7 +139,7 @@ function LoginPageInner() {
         <div className="inline-flex items-center gap-2 mb-3">
           <LogIn size={22} className="text-white" />
           <h1 className="text-2xl font-bold text-white tracking-wide">
-            Harbvisitor
+            Herbvisitor
           </h1>
         </div>
         <p className="text-white/75 text-sm">

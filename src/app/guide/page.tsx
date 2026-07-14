@@ -8,6 +8,7 @@ import {
   Search,
   Map as MapIcon,
   Bell,
+  User,
   KeyRound,
   Sparkles,
   ChevronDown,
@@ -21,6 +22,7 @@ const SECTION_ICONS: Record<string, LucideIcon> = {
   search: Search,
   map: MapIcon,
   news: Bell,
+  mypage: User,
   account: KeyRound,
   more: Sparkles,
 }

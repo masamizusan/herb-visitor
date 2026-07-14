@@ -40,7 +40,7 @@ export default function StaffLoginPage() {
             <ShieldCheck size={22} className="text-slate-700" />
             <h1 className="text-xl font-bold text-slate-800">職員用管理画面</h1>
           </div>
-          <p className="text-slate-500 text-sm">Harbvisitor 職員ログイン</p>
+          <p className="text-slate-500 text-sm">Herbvisitor 職員ログイン</p>
         </div>
 
         <form
