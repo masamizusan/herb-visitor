@@ -71,7 +71,7 @@ export const GUIDE_SECTIONS: GuideSection[] = [
     imageSrc: "/images/guide/guide_map_screenshot.jpg",
     imageAlt: "マップ画面（エリアマップ）のスクリーンショット",
     imageWidth: 739,
-    imageHeight: 656,
+    imageHeight: 860,
     imageCaption: "マップ画面（エリアマップ）のスクリーンショット",
     // TODO: 現在地表示機能は現時点で未実装。対応する場合はここに使い方を追記する。
   },
