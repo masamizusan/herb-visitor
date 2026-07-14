@@ -493,8 +493,6 @@ export default function HerbGardenFloorMap() {
           {plots.map((plot) => {
             const color = TYPE_COLORS[plot.type] ?? "#888780"
             const isHovered = hoveredPlot === plot.id
-            const label =
-              plot.name.length > 6 ? plot.name.slice(0, 5) + "…" : plot.name
             return (
               <g
                 key={plot.id}
@@ -526,16 +524,6 @@ export default function HerbGardenFloorMap() {
                   strokeWidth={1.5}
                   style={{ transition: "r 0.1s" }}
                 />
-                <text
-                  x={plot.x} y={plot.y + 16}
-                  textAnchor="middle"
-                  fontSize={9}
-                  fill={isHovered ? color : "#5f5e5a"}
-                  fontWeight={isHovered ? 600 : 400}
-                  className="pointer-events-none select-none"
-                >
-                  {label}
-                </text>
               </g>
             )
           })}
