@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import "./globals.css"
+import AppShell from "@/components/app-shell"
 import VisitorNav from "@/components/visitor-nav"
 import AutoLogoutProvider from "@/components/auto-logout-provider"
 import SwRegister from "@/components/sw-register"
@@ -42,12 +43,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className="min-h-dvh font-sans antialiased">
-        <div
-          className="max-w-lg mx-auto min-h-dvh"
-          style={{ paddingBottom: "calc(6rem + env(safe-area-inset-bottom, 0px))" }}
-        >
-          {children}
-        </div>
+        <AppShell>{children}</AppShell>
         <VisitorNav />
         <AutoLogoutProvider />
         <SwRegister />

@@ -158,7 +158,7 @@ export default function StaffDashboardPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-slate-100 w-screen ml-[calc(50%_-_50vw)]">
+    <div className="min-h-dvh bg-slate-100">
       <div className="bg-slate-800 px-5 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-white">
           <ShieldCheck size={20} />
@@ -254,7 +254,7 @@ export default function StaffDashboardPage() {
             value={notifBody}
             onChange={(e) => setNotifBody(e.target.value)}
             placeholder="本文（任意）"
-            rows={3}
+            rows={6}
             className="w-full px-3 py-2 rounded-lg border border-slate-300 bg-white text-sm outline-none focus:border-slate-500 resize-none"
           />
           {sendError && <p className="text-red-500 text-sm">{sendError}</p>}
