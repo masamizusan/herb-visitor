@@ -177,7 +177,7 @@ export default function MyNotesPage() {
                   <div className="flex items-start justify-between mb-2">
                     <div>
                       {note.plant_name && (
-                        <span className="inline-flex items-center gap-1 bg-green-100 text-herb-primary rounded-full px-2 py-0.5 text-xs font-medium mb-1">
+                        <span className="inline-flex items-center gap-1 bg-green-100 text-herb-primary rounded-sm px-2 py-0.5 text-xs font-medium mb-1">
                           <Leaf size={10} />
                           {note.plant_name}
                         </span>

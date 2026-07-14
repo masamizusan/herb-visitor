@@ -75,7 +75,7 @@ export default function GuidePage() {
                   {section.title}
                 </h3>
                 {section.comingSoon && (
-                  <span className="text-[10px] font-medium text-herb-text-secondary bg-herb-bg rounded-full px-2 py-0.5">
+                  <span className="text-[10px] font-medium text-herb-text-secondary bg-herb-bg rounded-sm px-2 py-0.5">
                     準備中
                   </span>
                 )}

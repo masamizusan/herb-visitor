@@ -285,7 +285,7 @@ export default function StaffNewsPage() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span
-                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm ${
                           CATEGORY_COLOR[item.category] ?? "bg-green-100 text-herb-primary"
                         }`}
                       >
@@ -296,7 +296,7 @@ export default function StaffNewsPage() {
                         {item.published_at}
                       </span>
                       <span
-                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm ${
                           item.is_published
                             ? "bg-green-100 text-green-700"
                             : "bg-slate-100 text-slate-500"

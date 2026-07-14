@@ -72,7 +72,7 @@ export default function NewsDetailPage({
         </Link>
         <div className="flex items-center gap-2 mb-2">
           <span
-            className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+            className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm ${
               CATEGORY_COLOR[item.category] ?? "bg-green-100 text-herb-primary"
             }`}
           >

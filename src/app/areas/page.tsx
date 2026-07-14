@@ -175,7 +175,7 @@ export default function AreasPage() {
                         {cats.map((cat) => (
                           <span
                             key={cat}
-                            className="bg-green-50 text-green-600 rounded-full px-2 py-0.5 text-[10px] font-medium"
+                            className="bg-green-50 text-green-600 rounded-sm px-2 py-0.5 text-[10px] font-medium"
                           >
                             {cat}
                           </span>

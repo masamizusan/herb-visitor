@@ -61,7 +61,7 @@ export default function NewsPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1.5">
                   <span
-                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
+                    className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm ${
                       CATEGORY_COLOR[item.category] ?? "bg-green-100 text-herb-primary"
                     }`}
                   >

@@ -275,12 +275,12 @@ export default function PlantDetailPage({
           <div>
             <h1 className="text-xl font-bold">{plant.name}</h1>
             <div className="flex items-center gap-2 mt-1">
-              <span className="inline-flex items-center gap-1 bg-green-100 text-herb-primary rounded-full px-2.5 py-0.5 text-xs font-medium">
+              <span className="inline-flex items-center gap-1 bg-green-100 text-herb-primary rounded-sm px-2.5 py-0.5 text-xs font-medium">
                 <MapPin size={12} />
                 エリア {plant.area}
               </span>
               {plant.category && (
-                <span className="bg-amber-100 text-amber-600 rounded-full px-2.5 py-0.5 text-xs font-medium">
+                <span className="bg-amber-100 text-amber-600 rounded-sm px-2.5 py-0.5 text-xs font-medium">
                   {plant.category}
                 </span>
               )}

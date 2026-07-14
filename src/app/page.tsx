@@ -258,7 +258,7 @@ export default function HomePage() {
                     sizes="144px"
                     iconSize={28}
                   />
-                  <span className="absolute top-2 left-2 bg-herb-primary/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-[10px] font-semibold text-white">
+                  <span className="absolute top-2 left-2 bg-herb-primary/90 backdrop-blur-sm rounded-sm px-2 py-0.5 text-[10px] font-semibold text-white">
                     見頃
                   </span>
                 </div>
@@ -350,7 +350,7 @@ export default function HomePage() {
                         sizes="(max-width: 512px) 50vw, 230px"
                         iconSize={32}
                       />
-                      <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-full px-2 py-0.5 text-[10px] font-semibold text-herb-primary">
+                      <span className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm rounded-sm px-2 py-0.5 text-[10px] font-semibold text-herb-primary">
                         <MapPin size={10} className="inline mr-0.5" />
                         {plant.area}
                       </span>
