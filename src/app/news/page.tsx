@@ -1,8 +1,9 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Bell, ChevronRight, Calendar } from "lucide-react"
-import { newsList } from "@/data/news"
+import { newsList, mapNewsRowToItem, type NewsItem, type NewsRow } from "@/data/news"
 
 const CATEGORY_COLOR: Record<string, string> = {
   "イベント": "bg-amber-100 text-amber-600",
@@ -16,7 +17,20 @@ function formatDate(dateStr: string) {
 }
 
 export default function NewsPage() {
-  const sorted = [...newsList].sort(
+  const [dbNews, setDbNews] = useState<NewsItem[]>([])
+
+  useEffect(() => {
+    fetch("/api/news")
+      .then((r) => r.json())
+      .then(({ news }: { news?: NewsRow[] }) => {
+        setDbNews((news ?? []).map(mapNewsRowToItem))
+      })
+      .catch(() => {
+        // 取得失敗時は静的お知らせのみ表示する
+      })
+  }, [])
+
+  const sorted = [...newsList, ...dbNews].sort(
     (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   )
 

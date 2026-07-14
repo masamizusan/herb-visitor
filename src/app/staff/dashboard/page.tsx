@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Search, ShieldCheck, LogOut, KeyRound, Copy, Check, Bell } from "lucide-react"
+import Link from "next/link"
+import { Search, ShieldCheck, LogOut, KeyRound, Copy, Check, Bell, Megaphone } from "lucide-react"
 
 interface StaffUser {
   id: string
@@ -176,6 +177,14 @@ export default function StaffDashboardPage() {
       </div>
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
+        <Link
+          href="/staff/news"
+          className="flex items-center gap-2 bg-white rounded-xl p-4 shadow-sm border border-slate-200 text-slate-800 font-semibold text-sm active:scale-[0.98] transition-transform"
+        >
+          <Megaphone size={18} className="text-herb-primary" />
+          お知らせ管理
+        </Link>
+
         <form onSubmit={handleSearch} className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 space-y-3">
           <label className="block text-xs font-medium text-slate-500">ユーザーID検索</label>
           <div className="flex gap-2">

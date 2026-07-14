@@ -1,6 +1,6 @@
 "use client"
 
-import { use } from "react"
+import { use, useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { notFound } from "next/navigation"
@@ -15,7 +15,7 @@ import {
   ShoppingBag,
   Truck,
 } from "lucide-react"
-import { newsList } from "@/data/news"
+import { newsList, mapNewsRowToItem, type NewsItem, type NewsRow } from "@/data/news"
 
 const CATEGORY_COLOR: Record<string, string> = {
   "イベント": "bg-amber-100 text-amber-600",
@@ -34,8 +34,28 @@ export default function NewsDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = use(params)
-  const item = newsList.find((n) => n.id === id)
-  if (!item) notFound()
+  const staticItem = newsList.find((n) => n.id === id)
+  const [dbItem, setDbItem] = useState<NewsItem | null>(null)
+  const [notFoundState, setNotFoundState] = useState(false)
+
+  useEffect(() => {
+    if (staticItem) return
+    fetch(`/api/news/${id}`)
+      .then((r) => {
+        if (!r.ok) throw new Error("not found")
+        return r.json()
+      })
+      .then(({ news }: { news: NewsRow }) => setDbItem(mapNewsRowToItem(news)))
+      .catch(() => setNotFoundState(true))
+    // staticItem は初回レンダー時の値から変わらないため依存配列に含めない
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
+
+  const item = staticItem ?? dbItem
+  if (!item) {
+    if (notFoundState) notFound()
+    return <div className="min-h-dvh" />
+  }
 
   const { content } = item
 
