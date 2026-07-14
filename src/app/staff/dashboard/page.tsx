@@ -159,26 +159,24 @@ export default function StaffDashboardPage() {
 
   return (
     <div className="min-h-dvh bg-slate-100 w-screen ml-[calc(50%_-_50vw)]">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-slate-800 px-5 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-white">
-            <ShieldCheck size={20} />
-            <div>
-              <p className="font-bold text-sm">職員用管理画面</p>
-              <p className="text-xs text-slate-300">{staffUsername}</p>
-            </div>
+      <div className="bg-slate-800 px-5 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-white">
+          <ShieldCheck size={20} />
+          <div>
+            <p className="font-bold text-sm">職員用管理画面</p>
+            <p className="text-xs text-slate-300">{staffUsername}</p>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-1 text-slate-300 hover:text-white text-sm"
-          >
-            <LogOut size={16} />
-            ログアウト
-          </button>
         </div>
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-1 text-slate-300 hover:text-white text-sm"
+        >
+          <LogOut size={16} />
+          ログアウト
+        </button>
       </div>
 
-      <div className="max-w-3xl mx-auto px-4 py-6 space-y-4">
+      <div className="px-4 sm:px-8 py-6 space-y-4">
         <Link
           href="/staff/news"
           className="flex items-center gap-2 bg-white rounded-xl p-4 shadow-sm border border-slate-200 text-slate-800 font-semibold text-sm active:scale-[0.98] transition-transform"
