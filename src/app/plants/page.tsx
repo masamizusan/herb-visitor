@@ -297,9 +297,9 @@ export default function PlantsPage() {
               <Link
                 key={plant.id}
                 href={`/plants/${plant.id}`}
-                className="bg-white rounded-2xl overflow-hidden shadow-sm card-hover"
+                className="bg-white rounded-2xl shadow-sm card-hover"
               >
-                <div className="aspect-[4/3] bg-green-100 relative">
+                <div className="aspect-[4/3] bg-green-100 relative rounded-t-2xl overflow-hidden">
                   <PlantImage
                     storagePath={photos[plant.name]?.storage_path}
                     alt={plant.name}
