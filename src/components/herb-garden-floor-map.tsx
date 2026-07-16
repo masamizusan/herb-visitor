@@ -147,6 +147,13 @@ export default function HerbGardenFloorMap() {
     })
   }, [])
 
+  // map_plots に修正後レコードが存在する植物は、Excel参照ドット（オレンジ）を
+  // 重複表示しないよう除外する。zone+nameが一致した場合のみ「修正済み」とみなす。
+  const correctedPlantKeys = useMemo(
+    () => new Set(plots.map((p) => `${p.zone}::${p.name}`)),
+    [plots]
+  )
+
   // ── ゾーン別プロット境界ボックス（herb-gardenと同一ロジック） ───────────────
   const PLOT_RADIUS = 6
   const PLOT_PADDING = 10
@@ -468,8 +475,10 @@ export default function HerbGardenFloorMap() {
             )
           })}
 
-          {/* Excel植物位置ドット */}
-          {EXCEL_PLANTS.map((plant) => {
+          {/* Excel植物位置ドット（map_plotsに修正後レコードがある植物は除外） */}
+          {EXCEL_PLANTS.filter(
+            (plant) => !correctedPlantKeys.has(`${plant.area}::${plant.name}`)
+          ).map((plant) => {
             const { x: bx, y: by } = excelToSvg(plant.x, plant.y)
             const off = zoneOffsets[plant.area as Zone]
             return (
