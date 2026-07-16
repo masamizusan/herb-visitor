@@ -148,11 +148,31 @@ export default function HerbGardenFloorMap() {
   }, [])
 
   // map_plots に修正後レコードが存在する植物は、Excel参照ドット（オレンジ）を
-  // 重複表示しないよう除外する。zone+nameが一致した場合のみ「修正済み」とみなす。
-  const correctedPlantKeys = useMemo(
-    () => new Set(plots.map((p) => `${p.zone}::${p.name}`)),
-    [plots]
-  )
+  // 重複表示しないよう除外する。
+  // Excel側は同名植物が複数ゾーンにまたがる場合「(D)」等のゾーン識別サフィックスを、
+  // 同一ゾーン内の重複は「(1)(2)」等の連番サフィックスを付けて区別しているが、
+  // map_plots側のサフィックスの付け方は一致しない（areas/[id]/page.tsxと同様の事情）。
+  // そのため末尾の「(...)」を除いたベース名 × ゾーンでグループ化し、そのゾーン内の
+  // map_plots登録件数ぶんだけExcelドットを「修正済み」として非表示にする。
+  const stripSuffix = (name: string) => name.replace(/\s*\([^)]*\)\s*$/, "").trim()
+
+  const hiddenExcelPlantIds = useMemo(() => {
+    const remaining = new Map<string, number>()
+    for (const plot of plots) {
+      const key = `${plot.zone}::${stripSuffix(plot.name)}`
+      remaining.set(key, (remaining.get(key) ?? 0) + 1)
+    }
+    const hidden = new Set<string>()
+    for (const plant of EXCEL_PLANTS) {
+      const key = `${plant.area}::${stripSuffix(plant.name)}`
+      const left = remaining.get(key) ?? 0
+      if (left > 0) {
+        hidden.add(plant.id)
+        remaining.set(key, left - 1)
+      }
+    }
+    return hidden
+  }, [plots])
 
   // ── ゾーン別プロット境界ボックス（herb-gardenと同一ロジック） ───────────────
   const PLOT_RADIUS = 6
@@ -477,7 +497,7 @@ export default function HerbGardenFloorMap() {
 
           {/* Excel植物位置ドット（map_plotsに修正後レコードがある植物は除外） */}
           {EXCEL_PLANTS.filter(
-            (plant) => !correctedPlantKeys.has(`${plant.area}::${plant.name}`)
+            (plant) => !hiddenExcelPlantIds.has(plant.id)
           ).map((plant) => {
             const { x: bx, y: by } = excelToSvg(plant.x, plant.y)
             const off = zoneOffsets[plant.area as Zone]
