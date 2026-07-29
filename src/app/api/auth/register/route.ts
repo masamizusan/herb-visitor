@@ -56,9 +56,10 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error || !data) {
-      console.error("users insert error:", error)
-      return NextResponse.json({ error: "登録に失敗しました" }, { status: 500 })
-    }
+  console.error("users insert error:", error)
+  // エラー詳細をクライアントに返すように変更
+  return NextResponse.json({ error: "登録失敗: " + JSON.stringify(error) }, { status: 500 })
+}
 
     const token = await createSessionToken({ userId: data.id, userCode: data.user_id })
     await setSessionCookie(token)
