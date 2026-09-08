@@ -1,9 +1,11 @@
 import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers"
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "herb-visitor-secret-fallback-change-me-please"
-)
+const secret = process.env.JWT_SECRET
+if (!secret) {
+  throw new Error("JWT_SECRET が設定されていません")
+}
+const JWT_SECRET = new TextEncoder().encode(secret)
 const COOKIE_NAME = "session"
 // JWTの有効期限。タブ/ブラウザを閉じるとハートビートが止まり、この期限で自然失効する。
 // ハートビートは HEARTBEAT_INTERVAL_MS ごとに /api/auth/refresh を呼び、トークンを更新する。

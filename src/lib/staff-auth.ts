@@ -1,9 +1,11 @@
 import { SignJWT, jwtVerify } from "jose"
 import { cookies } from "next/headers"
 
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "herb-visitor-secret-fallback-change-me-please"
-)
+const secret = process.env.JWT_SECRET
+if (!secret) {
+  throw new Error("JWT_SECRET が設定されていません")
+}
+const JWT_SECRET = new TextEncoder().encode(secret)
 const COOKIE_NAME = "staff_session"
 const JWT_EXPIRY = "30m"
 

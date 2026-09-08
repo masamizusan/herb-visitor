@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic"
 function getSupabase() {
   return createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 }
 
@@ -56,10 +56,12 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error || !data) {
-  console.error("users insert error:", error)
-  // エラー詳細をクライアントに返すように変更
-  return NextResponse.json({ error: "登録失敗: " + JSON.stringify(error) }, { status: 500 })
-}
+      console.error("users insert error:", error)
+      return NextResponse.json(
+        { error: "登録に失敗しました。時間をおいて再度お試しください。" },
+        { status: 500 }
+      )
+    }
 
     const token = await createSessionToken({ userId: data.id, userCode: data.user_id })
     await setSessionCookie(token)

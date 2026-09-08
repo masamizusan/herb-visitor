@@ -9,7 +9,7 @@ export async function GET() {
   // try-catch で囲んでエラー詳細を拾う
   try {
     const { data, error } = await supabase
-      .from("plant_photos") // ← ここが疑わしいです
+      .from("plant_photos")
       .select("id, storage_path, plant_name, caption")
       .eq("caption", "開花")
       .not("storage_path", "is", null)

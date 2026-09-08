@@ -23,11 +23,11 @@ export async function POST(request: NextRequest) {
 
     const { data: staff } = await supabase
       .from("staff_users")
-      .select("id, staff_username, password_hash")
+      .select("id, staff_username, password_hash, is_active")
       .eq("staff_username", staffUsername)
       .maybeSingle()
 
-    if (!staff) {
+    if (!staff || staff.is_active !== true) {
       return NextResponse.json({ error: "IDまたはパスワードが正しくありません" }, { status: 401 })
     }
 
